@@ -135,3 +135,6 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+*.ipynb
+*.png
