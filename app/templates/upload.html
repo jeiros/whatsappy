@@ -1,0 +1,15 @@
+<!-- upload.html-->
+
+{% extends "base.html" %}
+{% block title %}Upload{% endblock %}
+{% block body %}
+<div class="jumbotron">
+  <h1 class="display-3">Upload file</h1>
+  <p class="lead">Upload your whatsapp log file here!</p>
+  <hr class="my-4">
+  <form method=post enctype=multipart/form-data>
+  <p><input type=file name=file>
+     <input type=submit value=Upload>
+  </form>
+</div>
+{% endblock %}

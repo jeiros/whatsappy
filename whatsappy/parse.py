@@ -6,7 +6,8 @@ import pandas as pd
 
 def get_all_lines(fname):
     """
-    Read all the lines in a whatsapp log file in .txt format
+    Read all the lines in a whatsapp
+    log file in .txt format
     :param fname: path of the log file
     :return lines: list of str
     """
@@ -52,7 +53,8 @@ def parse_lines_into_df(lines, log_type='iphone'):
 
 def get_word_corpus(df):
     """
-    Return a dictionary of unique words in the 'message' column of df (the parsed log file in pd.DataFrame format).
+    Return a dictionary of unique words in the 'message'
+    column of df (the parsed log file in pd.DataFrame format).
     keys are the words, values are the number of occurences
     :param df: pd.DataFrame, a parsed whatsapp conversation
     :return result: dict
@@ -83,7 +85,8 @@ def sort_dict_by_values(word_dict, method='descending'):
 
 def variations_of_word(corpus, variation_list, min_count=1):
     """
-    Finds words in corpus that start with any of the words given in the variation_list
+    Finds words in corpus that start with any of the words
+    given in the variation_list
     :param corpus: dict
     :param variation_list: list of str
     :return subset_dict: dict
@@ -111,10 +114,19 @@ def get_name_list(df):
 
 def count_user_messages(df):
     """
-    Count total number of messages by each unique user in the 'sender' column of df
+    Count total number of message
+    by each unique user in the
+    'sender' column of df
 
     :param lines:
     :param name_list:
     :return:
     """
     return df.groupby(df.sender).count()['message']
+
+
+def corpus_to_txt(word_corpus, out_fn):
+    with open(out_fn, 'w') as f:
+        for pair in sort_dict_by_values(word_corpus):
+            word , count = pair
+            f.writelines("{} {}\n".format(word, count))
