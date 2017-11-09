@@ -5,3 +5,4 @@ DEBUG = True
 
 
 UPLOAD_FOLDER = 'app/uploads'
+RESULTS_FOLDER = 'app/results'

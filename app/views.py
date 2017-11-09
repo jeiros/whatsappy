@@ -7,7 +7,7 @@ from app import app
 from whatsappy import get_all_lines, parse_lines_into_df, get_word_corpus, \
     corpus_to_txt
 
-ALLOWED_EXTENSIONS = set(['txt', 'text'])
+ALLOWED_EXTENSIONS = {'txt', 'text'}
 
 
 def allowed_file(filename):
@@ -38,6 +38,8 @@ def upload():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
+            if not os.path.exists(app.config['UPLOAD_FOLDER']):
+                os.mkdir(app.config['UPLOAD_FOLDER'])
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             return analyze_file(filename)
             # return redirect(url_for('uploaded_file',
@@ -52,7 +54,9 @@ def uploaded_file(filename):
 @app.route('/results/<filename>')
 def analyze_file(filename):
     lines = get_all_lines(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-    df = parse_lines_into_df(lines, log_type='iphone')
+    df = parse_lines_into_df(lines, log_type='android')
     corpus = get_word_corpus(df)
-    corpus_to_txt(corpus, 'app/results/{}_corpus.txt'.format(filename))
-    return send_from_directory('results', '{}_corpus.txt'.format(filename))
+    if not os.path.exists(app.config['RESULTS_FOLDER']):
+        os.mkdir(app.config['RESULTS_FOLDER'])
+    corpus_to_txt(corpus, os.path.join(app.config['RESULTS_FOLDER'], os.path.basename(filename)) + '_corpus.txt')
+    return send_from_directory('results', '{}_corpus.txt'.format(os.path.basename(filename)))
