@@ -15,10 +15,10 @@ pip install -r requirements.txt
 pip install .
 ```
 
-alternatively, use the Docker image
+alternatively, use the [Docker image](https://hub.docker.com/r/jeiros/whatsappy)
 
 ```bash
-docker run -it --rm -p 8888:8888 whatsappy /bin/bash -c "jupyter notebook --ip="*" --port=8888 --no-browser --allow-root"
+docker run -it --rm -p 8888:8888 jeiros/whatsappy /bin/bash -c "jupyter notebook --ip="*" --port=8888 --no-browser --allow-root"
 ```
 
 
