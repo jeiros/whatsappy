@@ -1,4 +1,5 @@
 from collections import Counter
+from nltk.corpus import stopwords
 import operator
 import re
 import pandas as pd
@@ -22,6 +23,7 @@ def parse_lines_into_df(lines, log_type='iphone'):
     Index is date and time in format 'yyyy-mm-dd hh:mm:ss'
     The data frame has two columns, 'message' and 'sender'
     :param lines: list of str
+    :param log_type: str
     :return df: pd.DataFrame
     """
     log_type_list = ['iphone', 'android']
@@ -29,7 +31,7 @@ def parse_lines_into_df(lines, log_type='iphone'):
         raise ValueError('log_type must be iphone or android')
 
     if log_type == 'iphone':
-        expression = r'(?P<date>\d+\/\d+\/\d+) (?P<time>\d+\:\d+\:\d+)\: (?P<sender>.+?):(?P<message>.*)'
+        expression = r'(?P<date>\d+\/\d+\/\d+)\, (?P<time>\d+\:\d+\:\d+)\] (?P<sender>.+?): (?P<message>.*)'
     elif log_type == 'android':
         expression = r'(?P<date>\d+\/\d+\/\d+), (?P<time>\d+\:\d+) - (?P<sender>.+?):(?P<message>.*)'
     else:
@@ -37,7 +39,7 @@ def parse_lines_into_df(lines, log_type='iphone'):
     regexp = re.compile(expression)
     match_list = []
     for line in lines:
-        match = regexp.match(line)
+        match = regexp.search(line)
         if match is not None:
             group_dict = match.groupdict()
             new_dict = {}
@@ -64,12 +66,26 @@ def get_word_corpus(df):
     result = Counter(" ".join(df['message'].values.tolist()).split()).items()
     return dict(result)
 
+def clean_word_corpus(word_dict, lang='spanish', extra_words=[]):
+    """
+    Clean a word dictionary from stop words in that languagte
+    :param word_dict: dict, result of calling get_word_corpus
+    :param lang: str
+    :return newd: dict, a new cleaned corpus
+    """
+    nltk.download('stopwords')
+    stop_words = set(stopwords.words(lang) + extra_words)
+    newd = {}
+    for k, v in word_dict.items():
+        if k not in stop_words:
+            newd[k] = v
+    return newd
 
 def sort_dict_by_values(word_dict, method='descending'):
     """
     Sort a dictionary by values
-    :param word_dict:
-    :param method:
+    :param word_dict: dict
+    :param method: str
     :return:
     :raises ValueError:
     """
@@ -126,7 +142,10 @@ def count_user_messages(df):
 
 
 def corpus_to_txt(word_corpus, out_fn):
+    """
+    Writes a corpus dict to a file
+    """
     with open(out_fn, 'w') as f:
-        for pair in sort_dict_by_values(word_corpus):
+        for pair in word_corpus:
             word , count = pair
             f.writelines("{} {}\n".format(word, count))
