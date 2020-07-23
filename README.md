@@ -6,7 +6,7 @@ into pandas dataframes.
 
 ## Installation
 
-For the moment, just clone this repo and pip install it locally
+Clone this repo and pip install it locally
 
 ```bash
 git clone https://github.com/jeiros/whatsappy.git
